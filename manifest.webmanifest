@@ -1,0 +1,14 @@
+{
+    "background_color": "white",
+    "theme_color": "white",
+    "description": "Helps you get the monthly amortization fee and dues based on your loan options.",
+    "display": "fullscreen",
+    "icons": [{
+        "src": "calc2/timing.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    }],
+    "name": "Loan calculator",
+    "short_name": "Calc",
+    "start_url": "index.html"
+}

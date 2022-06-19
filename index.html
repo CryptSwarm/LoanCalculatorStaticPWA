@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .out-section {
+            background-color: #cff4fc;
+        }
+
+        .add-button {
+            position: absolute;
+            top: 1px;
+            left: 1px;
+        }
+
+        @media print {
+            body {
+                overflow: hidden !important;
+            }
+
+            .print-hide {
+                display: none !important;
+            }
+
+            #monthly-amortization-modal .modal-dialog {
+                max-width: 100% !important;
+                width: 100% !important;
+                position: fixed !important;
+                left: 0 !important;
+            }
+
+            .modal-backdrop {
+                background-color: white !important;
+                opacity: 1 !important;
+            }
+
+            .print-display {
+                display: flex !important;
+            }
+        }
+    </style>
+    <title>Loan Calculator</title>
+    <script src="index.js" defer></script>
+    <link rel="manifest" href="manifest.webmanifest">
+</head>
+
+<body class="h-100">
+    <button class="add-button">Add to home screen</button>
+    <div class="container mx-0 px-0">
+        <div class="row w-100 h-100 position-absolute align-items-center justify-content-center">
+            <div class="col col-lg-7 ms-4">
+                <div class="card-group">
+                    <div class="card input-section">
+                        <div class="card-body py-4">
+                            <h6>How much do you need?</h6>
+                            <input type="range" class="form-range" min="1000" max="30000" step="100" value="1000"
+                                id="amount-input">
+                            <div class="d-flex justify-content-between mt-2">
+                                <sup class="text-secondary">Min: 1,000</sup>
+                                <sup class="text-secondary">Max: 30,000</sup>
+                            </div>
+                            <h6 class="mt-5">Select your installment period</h6>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="terms-input" id="terms-input_1" value="6"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="terms-input_1">6 months</label>
+
+                                <input type="radio" class="btn-check" name="terms-input" id="terms-input_2" value="9"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="terms-input_2">9 months</label>
+
+                                <input type="radio" class="btn-check" name="terms-input" id="terms-input_3" value="12"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="terms-input_3">12 months</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card out-section">
+                        <div class="card-body pt-4">
+                            <h6>Loan amount</h6>
+                            <h3>&#8369; <span class="amount-input-display">0</span>.00</h3>
+                            <h6 class="mt-5">Monthly installment fee <small class="fw-light text-secondary">(may
+                                    change)</small></h6>
+                            <h3>&#8369; <span class="monthly-fee-display">0.00</span></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-lg mt-4" data-bs-toggle="modal"
+                    data-bs-target="#monthly-amortization-modal" id="view-monthly-btn" disabled>View monthly
+                    amortization</button>
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="monthly-amortization-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center">Monthly amortization</h5>
+                    <button type="button" class="btn-close print-hide" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3 print-hide">
+                        <span class="input-group-text" id="basic-addon1">Select loan date</span>
+                        <input type="date" class="form-control" aria-describedby="basic-addon1" id="date-input"
+                            value="">
+                    </div>
+                    <div class="d-flex justify-content-evenly d-none print-display">
+                        <div class="text-center">
+                            <h6 class="mb-0">Loan amount</h6>
+                            <h3>&#8369; <span class="amount-input-display"></span>.00</h3>
+                        </div>
+                        <div class="text-center">
+                            <h6 class="mb-0">Installment period</h6>
+                            <h3 class="terms-display"></h3>
+                        </div>
+                        <div class="text-center">
+                            <h6 class="mb-0">Monthly payment</h6>
+                            <h3>&#8369; <span class="monthly-fee-display"></span></h3>
+                        </div>
+                        <div class="text-center loan-date-display-container">
+                            <h6 class="mb-0">Loan date</h6>
+                            <h3 class="loan-date-display"></h3>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center"><span class="monthl-label-display">Month</span></th>
+                                <th scope="col" class="text-center">Balance</th>
+                                <th scope="col" class="text-center">Monthly + Interest</th>
+                                <th scope="col" class="text-center">Payment</th>
+                                <th scope="col" class="text-center">Total Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthly-amortization-rows">
+                        </tbody>
+                    </table>
+                    <div class="float-end mt-4"><button type="button" class="btn btn-secondary print-hide"
+                            data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary print-hide" id="print-display-btn">Print</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="bootstrap.bundle.min.js">
+    </script>
+    <!-- JQuery -->
+    <script src="jquery-git.min.js"></script>
+    <!-- MomentJS -->
+    <script src="moment.min.js"></script>
+    <!-- Page Custom JS -->
+    <script>
+        function updateCalculatorDisplay() {
+            var amount = parseFloat($('#amount-input').val());
+            var terms = parseFloat($('input[name="terms-input"]:checked').val());
+            var terms_interest_rate = getInterestRate(terms);
+            var monthly_fee = (typeof terms_interest_rate !== 'undefined' && terms_interest_rate != 0) ? ((amount /
+                terms) + (
+                amount * (terms_interest_rate /
+                    100))) : 0;
+
+            $(".terms-display").html(terms + " months");
+            $(".amount-input-display").html(formatWithComma(amount));
+            $(".monthly-fee-display").html(formatWithComma(formatCurrency(monthly_fee)));
+
+            updateMonthlyAmortizationDisplay(terms, monthly_fee, amount);
+            $('.loan-date-display-container').addClass('d-none');
+            $(".monthl-label-display").html("Month");
+        }
+
+        function getInterestRate(terms) {
+            var interest_rate = 0;
+
+            if (typeof terms !== "undefined") {
+                var terms_interest_rate = {
+                    "6": 2.89,
+                    "9": 2.79,
+                    "12": 2.69
+                }
+
+                interest_rate = terms_interest_rate[terms];
+            }
+
+            return interest_rate;
+        }
+
+        function updateMonthlyAmortizationDisplay(terms, monthly_fee, amount) {
+            var balance = amount;
+            var monthly = amount / terms;
+            var interest = ((monthly_fee * terms) - amount) / terms;
+            $("#monthly-amortization-rows").html('');
+
+            for (x = 1; x <= terms; x++) {
+                $("#monthly-amortization-rows").append('<tr>' +
+                    '<td class="text-center" id="monthly-date_' + x + '">' + x + '</th>' +
+                    '<td class="text-center">&#8369; ' + formatWithComma(formatCurrency(Math.abs(balance))) +
+                    '</th>' +
+                    '<td class="text-center">&#8369; ' + formatWithComma(formatCurrency(monthly)) + ' + &#8369; ' +
+                    formatWithComma(formatCurrency(interest)) + '</td>' +
+                    '<td class="text-center">&#8369; ' + formatWithComma(formatCurrency(monthly_fee)) + '</td>' +
+                    '<td class="text-center">&#8369; ' + formatWithComma(formatCurrency(monthly_fee * x)) +
+                    '</th>' +
+                    '</tr>');
+
+                balance = balance - (amount / terms);
+            }
+
+        }
+
+        $(function () {
+
+            $('#amount-input').on('input', function () {
+                updateCalculatorDisplay();
+            });
+            $('input[name="terms-input"]').on('change', function () {
+                updateCalculatorDisplay();
+                $('#view-monthly-btn').prop('disabled', false);
+            });
+            $("#date-input").attr('min', moment().format("YYYY-MM-DD"));
+            $("#date-input").on('change', function () {
+                var date_input = $(this).val();
+
+                if (date_input = Date.parse(date_input)) {
+                    $(".monthl-label-display").html("Month - Date");
+                    $(".loan-date-display").html(moment(date_input).format('L'));
+                    $('.loan-date-display-container').removeClass('d-none');
+                    var terms = parseInt($('input[name="terms-input"]:checked').val());
+
+                    for (x = 1; x <= terms; x++) {
+                        $('#monthly-date_' + x).html(x + " - " + moment(date_input).add(x, 'months')
+                            .format(
+                                'L'));
+                    }
+                }
+            });
+            $('#print-display-btn').on('click', function () {
+                window.print();
+            });
+        });
+
+        function formatCurrency(x) {
+            x = x.toFixed(2);
+            var parts = x.toString().split(".");
+            return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+        }
+
+
+        function formatWithComma(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
+</body>
+
+</html>
